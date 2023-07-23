@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prediction</title>
+    <style>
+        body{
+        background-image: radial-gradient(#19b1da, transparent);
+        }
+        .container{
+        display: flex;
+        flex-wrap: wrap;
+        align-content: center;
+        align-items: center;
+        flex-direction: column;
+        }
+        .box{
+        min-width: 75%;
+        background: white;
+        border-radius: 0px 30px 0px 30px;
+        padding: 1.5em;
+        box-shadow: 0px 0px 25px rgba(0,0,0,2);
+        margin: 10px;
+        font-size: 18px;
+        }
+        .selection{
+        margin-bottom: 0.5em;
+        }
+        .text{
+        margin-bottom: 0.5em;
+        min-width:100%
+        }
+        label,select{
+        display:flex;
+        min-width: 100%;
+        padding:5px 5px 5px 0px;
+        }
+        input{
+        min-width: 98.9%;
+        padding:5px;
+        }
+        h1,h3{
+        text-align: center;
+        }
+        .output{
+        padding: 10px;
+        font-size: 2em;
+        margin-top:10px;
+        }
+        button{
+        margin-top:5px;
+        min-width:30%;
+        padding: 5px;
+        font-size: 18px;
+        border-radius: 5px;
+        background-color: #19b1da
+        }
+        a{
+        text-decoration: none;
+        color: black;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Home Loan Eligibility Prediction</h1>
+    <h3>Please enter the details in order to check your home loan eligibility</h3>
+    <form class="box" action="{{url_for('predict')}}" method="post">
+        <div class="selection">
+            <label for="gender">Gender:</label>
+            <select name="gender" id="gender" required>
+                <option value="1">Male</option>
+                <option value="0">Female</option>
+            </select>
+        </div>
+        <div class="selection">
+            <label for="married">Married:</label>
+            <select name="married" id="married" required>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+        </div>
+        <div class="text">
+            <label for="dependents">Dependents:</label>
+            <input type="text" name="dependents" placeholder="Enter the No of Dependents"
+                   id="dependents" required>
+        </div>
+        <div class="selection">
+            <label for="education">Education:</label>
+            <select name="education" id="education" required>
+                <option value="1">Graduate</option>
+                <option value="0">Not Graduate</option>
+            </select>
+        </div>
+        <div class="selection">
+            <label for="self_employed">Self Employed:</label>
+            <select name="self_employed" id="self_employed" required>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+        </div>
+        <div class="text">
+            <label for="applicantincome">Applicant Income ($):</label>
+            <input type="number" name="applicantincome" placeholder="Enter income per annum" id="applicantincome"
+                   required>
+        </div>
+        <div class="text">
+            <label for="coapplicantincome">Co-Applicant Income ($):</label>
+            <input type="number" name="coapplicantincome" placeholder="Enter income per annum"
+                   id="coapplicantincome" required>
+        </div>
+        <div class="text">
+            <label for="loanamount">Loan amount in thousands ($):</label>
+            <input type="number" name="loanamount"
+                   id="loanamount" required>
+        </div>
+        <div class="text">
+            <label for="loan_amount_term">Loan Amount Term (in months):</label>
+            <input type="number" name="loan_amount_term"
+                   id="loan_amount_term" required>
+        </div>
+        <div class="selection">
+            <label for="credit_history">Credit History:</label>
+            <select name="credit_history" id="credit_history" required>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+        </div>
+        <div class="selection">
+            <label for="property_area">Property Area:</label>
+            <select name="property_area" id="property_area" required>
+                <option value="2">urban</option>
+                <option value="1">semiurban</option>
+                <option value="0">rural</option>
+            </select>
+        </div>
+        <div>
+            <button type="submit">Submit</button>
+        </div>
+
+        <div class="output"><strong> <span style="color: #0a0506">{{ prediction_text }}</span></strong></div>
+    </form>
+    <button type="button"><a href="{{url_for('home')}}">Press here to Logout</a></button>
+</div>
+</body>
+</html>
