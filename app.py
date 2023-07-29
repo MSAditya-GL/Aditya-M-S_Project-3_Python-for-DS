@@ -3,15 +3,14 @@ from flask_sqlalchemy import SQLAlchemy
 import numpy as np
 import pickle
 import bcrypt
+import pymysql
 
 app = Flask(__name__)
 app.app_context().push()
 
-import pymysql
-
 pymysql.install_as_MySQLdb()
 
-## open and load the pickle file provided in read mode.
+# load the pickle file.
 model = pickle.load(open('model.pkl', 'rb'))
 
 app.config['DEBUG'] = True
@@ -25,12 +24,14 @@ db = SQLAlchemy(app)
 
 
 class users(db.Model):
-    id = db.Column(db.Integer,primary_key = True)
-    user_name = db.Column (db.String(255))
+    id = db.Column(db.Integer, primary_key=True)
+    user_name = db.Column(db.String(255))
     password = db.Column(db.String(255))
-    def __init__(self,user_name,password):
+
+    def __init__(self, user_name, password):
         self.user_name = user_name
         self.password = password
+
 
 db.create_all()
 
@@ -50,37 +51,37 @@ def register():
         # Hash the password
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
-        # Perform necessary operations to store the user data in the database
-        data = users(username,hashed_password)
+        # store the user data in the database
+        data = users(username, hashed_password)
         db.session.add(data)
         db.session.commit()
         return redirect(url_for('login'))
     return render_template('register.html')
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    print("here")
     if request.method == 'POST':
         # Get form data
         username = request.form['username']
         password = request.form['password']
 
-        # Perform necessary operations to verify the user credentials
+        # verify the user credentials
         user = db.session.query(users).filter(users.user_name == username).first()
-        #user_list = users.query.filter_by(user_name == username).all()
+        # user_list = users.query.filter_by(user_name == username).all()
         if user is not None:
-            stored_password = user.password  # Assuming the hashed password is stored in the third column of the user table
+            stored_password = user.password
 
-            # Compare the hashed password with the provided password
+            # Check the hashed password with the form password
             if bcrypt.checkpw(password.encode('utf-8'), stored_password.encode('utf-8')):
-                # Password matches, user authenticated
                 session['loggedin'] = True
                 session['id'] = user.id
                 session['username'] = user.user_name
-                return redirect(url_for('predict'))  # Redirect to the predict page
+                return redirect(url_for('predict'))
             else:
-                return render_template('login.html', msg="The username and password dont match, please re-enter the details." )
-        else :
+                return render_template('login.html',
+                                       msg="The username and password dont match, please re-enter the details.")
+        else:
             return redirect(url_for('register'))
     return render_template('login.html')
 
@@ -92,8 +93,6 @@ def predict():
         final_features = [np.array(float_features)]
         prediction = model.predict(final_features)
 
-        output = round(prediction[0], 2)
-
         if prediction == 1:
             output = "Congrats!! You are eligible for the loan."
         else:
@@ -102,6 +101,7 @@ def predict():
             # Render the template with the prediction result and form data
         return render_template('predict.html', prediction_text=output)
     return render_template('predict.html')
+
 
 @app.route('/logout')
 def logout():
