@@ -68,7 +68,6 @@ def login():
 
         # verify the user credentials
         user = db.session.query(users).filter(users.user_name == username).first()
-        # user_list = users.query.filter_by(user_name == username).all()
         if user is not None:
             stored_password = user.password
 
@@ -98,7 +97,6 @@ def predict():
         else:
             output = "Sorry, You are not eligible for the loan."
 
-            # Render the template with the prediction result and form data
         return render_template('predict.html', prediction_text=output)
     return render_template('predict.html')
 
